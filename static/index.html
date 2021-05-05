@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    kuku
+    <input id="file" type="file" multiple name="file"/>
+    <button type="submit" onclick="kuku();">Submit</button>
+    
+
+    <script>
+
+        // httpbin.org gives you the headers in the response
+        // body `res.data`.
+        // See: https://httpbin.org/#/HTTP_Methods/get_get
+        async function kuku() {
+
+            var formData = new FormData();
+            var imagefile = document.querySelector('#file');
+            formData.append("image", imagefile.files[0]);
+            res = axios.post('http://127.0.0.1:8080/file/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6IjEiLCJyb2xlIjoxLCJleHAiOjE2MTcxMzQ0MjJ9.L-2j4sLsv0OEBQsrP2jJwbQ4OTH_1diIO-5Wfi9wEpboKN4SY8JAmeq0H9ZRbcNybSMa__TB0MbKZWeYPw-WNQ'
+                }
+            })
+
+            console.log(res); // "test-value"
+        }
+    </script>
+</body>
+</html>
