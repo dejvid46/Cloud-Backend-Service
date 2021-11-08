@@ -22,15 +22,23 @@
 
             var formData = new FormData();
             var imagefile = document.querySelector('#file');
-            formData.append("image", imagefile.files[0]);
-            res = axios.post('http://127.0.0.1:8080/file/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6IjEiLCJyb2xlIjoxLCJleHAiOjE2MTcxMzQ0MjJ9.L-2j4sLsv0OEBQsrP2jJwbQ4OTH_1diIO-5Wfi9wEpboKN4SY8JAmeq0H9ZRbcNybSMa__TB0MbKZWeYPw-WNQ'
-                }
-            })
 
-            console.log(res); // "test-value"
+
+            for (let i = 0; i < imagefile.files.length; i++) {
+                formData.append("image", imagefile.files[i]);
+                res = axios.post('http://127.0.0.1:8080/file/', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiZXhwIjoxNjM2NDUxNTI3fQ.-xRoTYRpWT1Cd0X3TJgMo062ez9JgP3OMhc_TnMh_m5aYAy_Kx-siIlbdnNaxqG5w0qrNzRL_qU-kJ6o1G0urw'
+                    }
+                });
+
+                res.then((res) => {
+                    console.log(res);
+                });   
+                
+            }
+            
         }
     </script>
 </body>

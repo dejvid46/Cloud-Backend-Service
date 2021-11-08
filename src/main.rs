@@ -16,10 +16,6 @@ mod db;
 use db::{create_tables, Pool};
 
 
-// kuku
-
-
-
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
@@ -44,7 +40,6 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             // admin utils
             .route("/users", web::get().to(handlers::admin::get_users))
-            .route("/users", web::get().to(handlers::admin::get_users))
             .route("/users/{id}", web::get().to(handlers::admin::get_user_by_id))
             .route("/users/{id}", web::delete().to(handlers::admin::delete_user))
             .route("/users/{id}", web::patch().to(handlers::admin::update_user))
@@ -64,8 +59,15 @@ async fn main() -> std::io::Result<()> {
             .route("/folder/{filename:.*}", web::post().to(handlers::folder::create_folder))
             .route("/folder/{filename:.*}", web::delete().to(handlers::folder::delete_folder))
             .service(fs::Files::new("/", "./static"))
+            .default_service(
+                web::route().to(err404)
+            )
     })
-    .bind(env::var("REDIS_ADDRESS").unwrap())?
+    .bind(env::var("ADDRESS").unwrap())?
     .run()
     .await
+}
+
+async fn err404() -> String {
+    return String::from("error 404");
 }

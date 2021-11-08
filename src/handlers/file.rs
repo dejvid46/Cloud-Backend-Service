@@ -7,11 +7,11 @@ use futures::{StreamExt, TryStreamExt};
 use crate::middleware::{CanDownload, CanUpload};
 use crate::utils::valid_path;
 use crate::reserr::ResErr;
+use crate::utils::dir_size;
 
 pub async fn get_file(token: CanDownload, req: HttpRequest) -> Result<NamedFile, ResErr> {
 
-    let path: String = (env::var("CLOUD_PATH").unwrap()+&token.path+"/"+req.match_info().query("filename")).parse()
-        .map_err(|_| ResErr::BadClientData("cant parse path"))?;
+    let path: String = format!("./{}{}/{}", env::var("CLOUD_PATH").unwrap(), &token.path, req.match_info().query("filename"));
 
     Ok(NamedFile::open(path).map_err(|_| ResErr::BadClientData("file not found"))?)
 
@@ -31,11 +31,21 @@ pub async fn post_file(token: CanUpload, req: HttpRequest, mut payload: Multipar
             None => return Ok(HttpResponse::BadRequest().body("cant find filename"))
         };
 
-        let filepath: String = (env::var("CLOUD_PATH").unwrap()+&token.path+"/"+req.match_info().query("filename")+filename).parse()
-            .map_err(|_| ResErr::BadClientData("cant parse path"))?;
+        let main_folder: String = format!("./{}{}", env::var("CLOUD_PATH").unwrap(), &token.path);
+
+        let folder_size: u32 = dir_size(&main_folder)
+            .map_err(|_| ResErr::InternalError("folder size counter is broaken"))?;
+
+        if folder_size > token.size {
+            return Err(ResErr::BadClientData("you dont have size"));
+        }
+
+        let mut filepath: String = format!("{}/{}", main_folder, req.match_info().query("filename"));
 
         valid_path(&filepath)
             .map_err(|err| ResErr::BadClientData(err))?;
+
+        filepath = filepath + filename;
 
         // File::create is blocking operation, use threadpool
         let mut f = web::block(|| std::fs::File::create(filepath)).await
