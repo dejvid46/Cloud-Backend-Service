@@ -4,6 +4,8 @@ use std::env;
 use std::{fs, io, path::PathBuf};
 use std::convert::TryFrom;
 
+use crate::models::Folder;
+
 pub fn validate_path(path: &str) -> Result<(), ValidationError> {
 
     if path.starts_with("./") {
@@ -70,4 +72,23 @@ pub fn dir_size(path: impl Into<PathBuf>) -> io::Result<u32> {
 
 fn u64_to_u32(v: u64) -> u32 {
     u32::try_from(v / 1000000).unwrap_or_default()
+}
+
+pub fn get_folder_obj(path: &str) {
+    fn get_folder_obj(path: &str, obj: Folder) {
+        let folders = fs::read_dir(path).unwrap();
+        
+        for folder in folders {
+            folder.unwrap();
+
+            
+        }
+    }
+
+    return get_folder_obj(path, Folder { 
+        name: String::from("cloud"),
+        path: String::from(""),
+        folders: Vec::new(),
+        files: Vec::new()
+    });
 }

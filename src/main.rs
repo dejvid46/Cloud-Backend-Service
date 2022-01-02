@@ -58,6 +58,8 @@ async fn main() -> std::io::Result<()> {
             .route("/folder/{filename:.*}", web::get().to(handlers::folder::get_folder))
             .route("/folder/{filename:.*}", web::post().to(handlers::folder::create_folder))
             .route("/folder/{filename:.*}", web::delete().to(handlers::folder::delete_folder))
+            // tree
+            .route("/tree", web::get().to(handlers::folder::get_tree))
             .service(fs::Files::new("/", "./static"))
             .default_service(
                 web::route().to(err404)

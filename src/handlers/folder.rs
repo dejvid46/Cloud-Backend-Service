@@ -7,6 +7,7 @@ use crate::utils::valid_path;
 use crate::models::File;
 use crate::middleware::{CanDownload, CanUpload};
 use crate::reserr::ResErr;
+use crate::utils::get_folder_obj;
 
 pub async fn get_folder(token: CanDownload, req: HttpRequest) -> Result<HttpResponse, ResErr> {
 
@@ -61,4 +62,13 @@ pub async fn delete_folder(token: CanUpload, req: HttpRequest) -> Result<HttpRes
 
     fs::remove_dir_all(path).map_err(|_| ResErr::BadClientData("cant remove folder"))?;
     Ok(HttpResponse::Ok().body("folder deleted"))
+}
+
+pub async fn get_tree(token: CanDownload, req: HttpRequest) -> Result<HttpResponse, Error> {
+    
+    let main_folder: String = format!("./{}{}", env::var("CLOUD_PATH").unwrap(), &token.path);
+
+    valid_path(&main_folder).map_err(|err| ResErr::BadClientData(err))?;
+    
+    Ok(HttpResponse::Ok().json(get_folder_obj(&main_folder)))
 }
