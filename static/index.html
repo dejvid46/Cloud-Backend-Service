@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,11 +8,12 @@
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
+
 <body>
     kuku
-    <input id="file" type="file" multiple name="file"/>
+    <input id="file" type="file" multiple name="file" />
     <button type="submit" onclick="kuku();">Submit</button>
-    
+
 
     <script>
 
@@ -29,17 +31,18 @@
                 res = axios.post('http://127.0.0.1:8080/file/', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiZXhwIjoxNjM2NjE0NDU4fQ.5cAz0sLhqHkj0MwatFnBcSNNp4YS-DqanA3e6IMsw7wcpQe3PamaLDMGMnQ3_ds5L9sJB5-GcsvLl3zskAg3og'
+                        'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiZXhwIjoxNjQxMjI1NzYwfQ.2Yd8B4BCOCMRyLM40mz9txRn4EKa6z9PyAvMF9bLdXme8i4InsxC7augg70JeWsz-BXrLFAlqyfx47Z8nJ1LqQ'
                     }
                 });
 
                 res.then((res) => {
                     console.log(res);
-                });   
-                
+                });
+
             }
-            
+
         }
     </script>
 </body>
+
 </html>
