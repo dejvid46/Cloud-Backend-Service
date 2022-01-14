@@ -84,6 +84,10 @@ async fn main() -> std::io::Result<()> {
                 "/folder/{filename:.*}",
                 web::delete().to(handlers::folder::delete_folder),
             )
+            .route(
+                "/folder_tree",
+                web::get().to(handlers::folder::get_tree),
+            )
             .route("/", web::get().to(index))
             .service(fs::Files::new("/", "./static"))
             .default_service(web::route().to(err404))

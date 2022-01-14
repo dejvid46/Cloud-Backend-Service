@@ -61,11 +61,10 @@ pub struct Token {
     pub token: String,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Folder {
     pub name:String,
-    pub path: String,
-    pub folders: Vec<Folder>,
-    pub files: Vec<TreeFile>
+    pub folders: Vec<Folder>
 }
 
 pub struct TreeFile {

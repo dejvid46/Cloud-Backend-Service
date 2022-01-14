@@ -7,7 +7,7 @@ use std::time::SystemTime;
 use crate::middleware::{CanDownload, CanUpload};
 use crate::models::File;
 use crate::reserr::ResErr;
-use crate::utils::get_folder_obj;
+use crate::utils::get_folder_and_files;
 
 pub async fn get_folder(token: CanDownload, req: HttpRequest) -> Result<HttpResponse, ResErr> {
     let path: String =
@@ -75,10 +75,10 @@ pub async fn delete_folder(token: CanUpload, req: HttpRequest) -> Result<HttpRes
     Ok(HttpResponse::Ok().body("folder deleted"))
 }
 
-pub async fn get_tree(token: CanDownload, req: HttpRequest) -> Result<HttpResponse, Error> {
+pub async fn get_tree(token: CanDownload, _req: HttpRequest) -> Result<HttpResponse, Error> {
     let main_folder: String = format!("./{}{}", env::var("CLOUD_PATH").unwrap(), &token.path);
 
     valid_path(&main_folder).map_err(|err| ResErr::BadClientData(err))?;
 
-    Ok(HttpResponse::Ok().json(get_folder_obj(&main_folder)))
+    Ok(HttpResponse::Ok().json(get_folder_and_files(main_folder)))
 }
