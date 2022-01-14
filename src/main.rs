@@ -1,8 +1,10 @@
 // dependencies
 use actix_files as fs;
-use actix_web::{error, web, App, HttpResponse, HttpServer};
+use actix_files::NamedFile;
+use actix_web::{error, web, App, HttpRequest, HttpResponse, HttpServer, Result};
 use r2d2_sqlite::{self, SqliteConnectionManager};
 use std::env;
+use std::path::PathBuf;
 
 // modules
 mod handlers;
@@ -82,12 +84,20 @@ async fn main() -> std::io::Result<()> {
                 "/folder/{filename:.*}",
                 web::delete().to(handlers::folder::delete_folder),
             )
+            .route("/", web::get().to(index))
             .service(fs::Files::new("/", "./static"))
             .default_service(web::route().to(err404))
     })
     .bind(env::var("ADDRESS").unwrap())?
     .run()
     .await
+}
+
+async fn index(_req: HttpRequest) -> Result<NamedFile, ResErr> {
+    let path: PathBuf = "./static/index.html".parse().unwrap();
+    let file = NamedFile::open(path).map_err(|_| ResErr::BadClientData("error 404"))?;
+
+    Ok(file)
 }
 
 async fn err404() -> Result<HttpResponse, ResErr> {

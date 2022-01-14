@@ -25,20 +25,21 @@
             var formData = new FormData();
             var imagefile = document.querySelector('#file');
 
-
             for (let i = 0; i < imagefile.files.length; i++) {
-                formData.append("image", imagefile.files[i]);
-                res = axios.post('http://127.0.0.1:8080/file/', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiZXhwIjoxNjQxMjI1NzYwfQ.2Yd8B4BCOCMRyLM40mz9txRn4EKa6z9PyAvMF9bLdXme8i4InsxC7augg70JeWsz-BXrLFAlqyfx47Z8nJ1LqQ'
+                formData.append("file", imagefile.files[i]);
+                res = fetch(
+                    "http://127.0.0.1:8080/file/",
+                    {
+                        method: "POST",
+                        headers: new Headers({
+                            'token': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiZXhwIjoxNjQyMjQ1OTc5fQ.dUYhiG-2zAinUaXJZtI85whH2xOxAZ_O39H89Ru91hNiqBxBlzweD2tEwDs5Q5sd5ovxNayfaHgup-hHNygjbA"
+                        }),
+                        body: formData
                     }
-                });
-
+                )
                 res.then((res) => {
                     console.log(res);
                 });
-
             }
 
         }
