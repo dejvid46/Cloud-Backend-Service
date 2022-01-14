@@ -45,7 +45,7 @@ pub async fn post_file(token: CanUpload, req: HttpRequest, mut payload: Multipar
         valid_path(&filepath)
             .map_err(|err| ResErr::BadClientData(err))?;
 
-        filepath = filepath + filename;
+        filepath = filepath +"/"+ filename;
 
         // File::create is blocking operation, use threadpool
         let mut f = web::block(|| std::fs::File::create(filepath)).await
