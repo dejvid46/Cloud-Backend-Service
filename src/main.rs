@@ -13,8 +13,8 @@ mod middleware;
 mod models;
 mod reserr;
 mod utils;
-
 mod db;
+
 use db::{create_tables, Pool};
 use reserr::ResErr;
 

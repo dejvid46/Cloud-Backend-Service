@@ -11,7 +11,11 @@ pub async fn login(db: web::Data<Pool>, user: web::Json<Login>) -> Result<HttpRe
     let res = (execute(&db, Queries::GetUserByEmail(user.email.clone()))
         .map_err(|_| ResErr::BadClientData("bad email or password"))?).one();
 
-    verify(&user.pass, &res.pass).map_err(|_| ResErr::BadClientData("bad email or password"))?;
+    let verify_res = verify(&user.pass, &res.pass).map_err(|_| ResErr::BadClientData("bad email or password"))?;
+
+    if !verify_res {
+        return Err(ResErr::BadClientData("bad email or password"));
+    }
     
     Ok(HttpResponse::Ok().json(create_jwt(res.id)))
 }
