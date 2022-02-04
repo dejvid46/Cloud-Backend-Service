@@ -1,32 +1,37 @@
-use actix_web::{HttpResponse, web};
+use actix_web::{web, HttpResponse};
+use bcrypt::{hash, DEFAULT_COST};
 use validator::Validate;
-use bcrypt::{DEFAULT_COST, hash};
 
-use crate::models::{Queries, User};
 use crate::db::{execute, Pool};
 use crate::middleware::MustLogin;
+use crate::models::{ChangingUser, Queries};
 use crate::reserr::ResErr;
 
 pub async fn get_me(token: MustLogin, db: web::Data<Pool>) -> Result<HttpResponse, ResErr> {
-
     let mut user = (execute(&db, Queries::GetUserById(token.id))
-        .map_err(|_| ResErr::BadClientData("cant get user"))?).one();
+        .map_err(|_| ResErr::BadClientData("cant get user"))?)
+    .one();
 
     user.pass = "".to_string();
 
     Ok(HttpResponse::Ok().json(user))
 }
 
-pub async fn update_me(token: MustLogin, db: web::Data<Pool>, mut user: web::Json<User>) -> Result<HttpResponse, ResErr> {
-
+pub async fn update_me(
+    token: MustLogin,
+    db: web::Data<Pool>,
+    mut user: web::Json<ChangingUser>,
+) -> Result<HttpResponse, ResErr> {
     // error message dont work
-    user.validate().map_err(|err| ResErr::BadClientData("no valid input"))?;
+    user.validate()
+        .map_err(|err| ResErr::BadClientData("no valid input"))?;
 
-    user.pass = hash(user.pass.clone(), DEFAULT_COST)
-        .map_err(|_| ResErr::InternalError("cant hash"))?;
+    user.pass =
+        hash(user.pass.clone(), DEFAULT_COST).map_err(|_| ResErr::InternalError("cant hash"))?;
 
-    (execute(&db, Queries::UpdateUserById(token.id, user))
-        .map_err(|_| ResErr::BadClientData("cant update"))?).none();
+    (execute(&db, Queries::UpdateMeById(token.id, user))
+        .map_err(|_| ResErr::BadClientData("cant update"))?)
+    .none();
 
     Ok(HttpResponse::Ok().body("updated"))
 }

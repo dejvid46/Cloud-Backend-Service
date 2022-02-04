@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
-use actix_web::web::Json;
-use validator::Validate;
 use crate::utils::{valid_pass, validate_path};
+use actix_web::web::Json;
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
 pub struct User {
@@ -15,7 +15,7 @@ pub struct User {
     pub size: u32,
     #[validate(custom = "validate_path")]
     pub path: String,
-    pub status: u8
+    pub status: u8,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
@@ -29,11 +29,12 @@ pub struct ChangingUser {
 }
 
 pub enum Queries {
-    GetUserById (u32),
+    GetUserById(u32),
     GetAllUsers,
-    DeleteUserById (u32),
-    AddUser (Json<User>),
-    UpdateUserById (u32, Json<User>),
+    DeleteUserById(u32),
+    AddUser(Json<User>),
+    UpdateUserById(u32, Json<User>),
+    UpdateMeById(u32, Json<ChangingUser>),
     GetUserByEmail(String),
 }
 
@@ -63,12 +64,11 @@ pub struct Token {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Folder {
-    pub name:String,
-    pub folders: Vec<Folder>
+    pub name: String,
+    pub folders: Vec<Folder>,
 }
 
 pub struct TreeFile {
     pub name: String,
-    pub path: String
+    pub path: String,
 }
-

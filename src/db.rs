@@ -2,7 +2,7 @@ use actix_web::web::Json;
 use bcrypt::{hash, DEFAULT_COST};
 use rusqlite::NO_PARAMS;
 
-use crate::models::{Queries, User};
+use crate::models::{ChangingUser, Queries, User};
 
 pub type Pool = r2d2::Pool<r2d2_sqlite::SqliteConnectionManager>;
 pub type Connection = r2d2::PooledConnection<r2d2_sqlite::SqliteConnectionManager>;
@@ -63,6 +63,12 @@ pub fn execute(pool: &Pool, query: Queries) -> Result<QueryResult<User>, rusqlit
             id,
         )?),
         Queries::UpdateUserById(id, user) => QueryResult::None(update_user_by_id(
+            pool.get()
+                .map_err(|_| rusqlite::Error::QueryReturnedNoRows)?,
+            id,
+            &user,
+        )?),
+        Queries::UpdateMeById(id, user) => QueryResult::None(update_me_by_id(
             pool.get()
                 .map_err(|_| rusqlite::Error::QueryReturnedNoRows)?,
             id,
@@ -189,6 +195,25 @@ fn update_user_by_id(conn: Connection, id: u32, user: &Json<User>) -> Result<(),
         &user.path,
         &user.status.to_string(),
     ])?;
+    Ok(())
+}
+
+fn update_me_by_id(
+    conn: Connection,
+    id: u32,
+    user: &Json<ChangingUser>,
+) -> Result<(), rusqlite::Error> {
+    conn.prepare(
+        "
+        UPDATE Users 
+        SET 
+            name = ?2, 
+            email = ?3, 
+            pass = ?4
+        WHERE id=(?1)
+    ",
+    )?
+    .execute(&[&id.to_string(), &user.name, &user.email, &user.pass])?;
     Ok(())
 }
 
