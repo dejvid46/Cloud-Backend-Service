@@ -57,8 +57,6 @@ pub async fn create_folder(token: CanUpload, req: HttpRequest) -> Result<HttpRes
             .parse()
             .map_err(|_| ResErr::BadClientData("cant parse path"))?;
 
-    valid_path(&path).map_err(|err| ResErr::BadClientData(err))?;
-
     fs::create_dir_all(path).map_err(|_| ResErr::BadClientData("cant create folder"))?;
 
     Ok(HttpResponse::Ok().body("folder created"))
