@@ -7,13 +7,13 @@ use std::env;
 use std::path::PathBuf;
 
 // modules
+mod db;
 mod handlers;
 mod jwt;
 mod middleware;
 mod models;
 mod reserr;
 mod utils;
-mod db;
 
 use db::{create_tables, Pool};
 use reserr::ResErr;
@@ -65,6 +65,10 @@ async fn main() -> std::io::Result<()> {
             )
             .route(
                 "/file/{filename:.*}",
+                web::patch().to(handlers::file::rename_file),
+            )
+            .route(
+                "/file/{filename:.*}",
                 web::post().to(handlers::file::post_file),
             )
             .route(
@@ -84,10 +88,7 @@ async fn main() -> std::io::Result<()> {
                 "/folder/{filename:.*}",
                 web::delete().to(handlers::folder::delete_folder),
             )
-            .route(
-                "/folder_tree",
-                web::get().to(handlers::folder::get_tree),
-            )
+            .route("/folder_tree", web::get().to(handlers::folder::get_tree))
             .route("/", web::get().to(index))
             .service(fs::Files::new("/", "./static"))
             .default_service(web::route().to(err404))

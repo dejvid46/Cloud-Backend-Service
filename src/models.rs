@@ -18,6 +18,11 @@ pub struct User {
     pub status: u8,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Rename {
+    pub name: String,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
 pub struct ChangingUser {
     #[validate(length(min = 4, max = 20))]
