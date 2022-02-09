@@ -45,8 +45,14 @@ pub async fn add_user(
     }
 
     // error message dont work
-    user.validate()
-        .map_err(|err| ResErr::BadClientData("no valid input"))?;
+    user.validate().map_err(|err| {
+        ResErr::BadClientDataOwned(
+            err.field_errors().into_values().next().unwrap()[0]
+                .code
+                .as_ref()
+                .to_string(),
+        )
+    })?;
 
     user.pass =
         hash(user.pass.clone(), DEFAULT_COST).map_err(|_| ResErr::InternalError("bad hash"))?;
@@ -91,8 +97,14 @@ pub async fn update_user(
     let id = path.into_inner().0;
 
     // error message dont work
-    user.validate()
-        .map_err(|err| ResErr::BadClientData("no valid input"))?;
+    user.validate().map_err(|err| {
+        ResErr::BadClientDataOwned(
+            err.field_errors().into_values().next().unwrap()[0]
+                .code
+                .as_ref()
+                .to_string(),
+        )
+    })?;
     if user.status == 1 {
         return Err(ResErr::BadClientData("cant add admin"));
     };
