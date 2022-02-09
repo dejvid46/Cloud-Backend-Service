@@ -25,11 +25,11 @@ pub struct Rename {
 
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
 pub struct ChangingUser {
-    #[validate(length(min = 4, max = 20))]
+    #[validate(length(min = 4, max = 20, code = "name min 4 max 20 letters"))]
     pub name: String,
     #[validate(email)]
     pub email: String,
-    #[validate(length(min = 8), custom = "valid_pass")]
+    #[validate(length(min = 8, code = "pass min 8 letters"), custom = "valid_pass")]
     pub pass: String,
 }
 
