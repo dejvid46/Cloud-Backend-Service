@@ -29,8 +29,6 @@ pub async fn rename_file(
         rename.name
     );
 
-    println!("{:?} to: {:?}", &old_path, &new_path);
-
     fs::rename(old_path, new_path).map_err(|_| ResErr::BadClientData("can not be renamed"))?;
 
     Ok(HttpResponse::Ok().body("renamed"))
