@@ -11,7 +11,7 @@ use crate::utils::dir_size;
 use crate::utils::valid_path;
 
 pub async fn rename_file(
-    token: CanDownload,
+    token: CanUpload,
     req: HttpRequest,
     rename: web::Json<Rename>,
 ) -> Result<HttpResponse, ResErr> {
@@ -34,7 +34,7 @@ pub async fn rename_file(
     Ok(HttpResponse::Ok().body("renamed"))
 }
 
-pub async fn get_file(token: CanUpload, req: HttpRequest) -> Result<NamedFile, ResErr> {
+pub async fn get_file(token: CanDownload, req: HttpRequest) -> Result<NamedFile, ResErr> {
     let path: String = format!(
         "./{}{}/{}",
         env::var("CLOUD_PATH").unwrap(),
