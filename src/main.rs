@@ -64,6 +64,10 @@ async fn main() -> std::io::Result<()> {
                 web::get().to(handlers::file::get_file),
             )
             .route(
+                "/file_exist/{filename:.*}",
+                web::get().to(handlers::file::get_file_exist),
+            )
+            .route(
                 "/file/{filename:.*}",
                 web::patch().to(handlers::file::rename_file),
             )

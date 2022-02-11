@@ -2,13 +2,28 @@ use actix_files::NamedFile;
 use actix_multipart::Multipart;
 use actix_web::{web, HttpRequest, HttpResponse};
 use futures::{StreamExt, TryStreamExt};
-use std::{env, fs, io::Write, path::PathBuf};
+use std::{env, fs, io::Write, path::Path, path::PathBuf};
 
 use crate::middleware::{CanDownload, CanUpload};
 use crate::models::Rename;
 use crate::reserr::ResErr;
 use crate::utils::dir_size;
 use crate::utils::valid_path;
+
+pub async fn get_file_exist(token: CanDownload, req: HttpRequest) -> Result<HttpResponse, ResErr> {
+    let path: String = format!(
+        "./{}{}/{}",
+        env::var("CLOUD_PATH").unwrap(),
+        &token.path,
+        req.match_info().query("filename")
+    );
+
+    if !Path::new(&path).exists() {
+        return Err(ResErr::BadClientData("file dont exist"));
+    };
+
+    Ok(HttpResponse::Ok().body("file exist"))
+}
 
 pub async fn rename_file(
     token: CanUpload,
