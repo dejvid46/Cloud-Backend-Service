@@ -95,7 +95,7 @@ async fn main() -> std::io::Result<()> {
             .route("/folder_tree", web::get().to(handlers::folder::get_tree))
             .route("/", web::get().to(index))
             .service(fs::Files::new("/", "./static"))
-            .default_service(web::route().to(err404))
+            .default_service(web::route().to(index))
     })
     .bind(env::var("ADDRESS").unwrap())?
     .run()
@@ -107,8 +107,4 @@ async fn index(_req: HttpRequest) -> Result<NamedFile, ResErr> {
     let file = NamedFile::open(path).map_err(|_| ResErr::BadClientData("error 404"))?;
 
     Ok(file)
-}
-
-async fn err404() -> Result<HttpResponse, ResErr> {
-    Err(ResErr::BadClientData("error 404"))
 }

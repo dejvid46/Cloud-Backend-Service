@@ -223,8 +223,8 @@ pub fn create_tables(conn: &Pool) {
         .execute(
             "create table if not exists Users (
             id integer primary key,
-            name TEXT NOT NULL UNIQUE,
-	        email TEXT NOT NULL UNIQUE,
+            name VARCHAR(10) NOT NULL UNIQUE,
+	        email VARCHAR(30) NOT NULL UNIQUE,
             pass TEXT NOT NULL,
             size UNSIGNED INT,
 	        path TEXT NOT NULL,

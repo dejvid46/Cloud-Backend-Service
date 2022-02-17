@@ -3,3 +3,4 @@ cloud
 target
 Cargo.lock
 data.db
+static
