@@ -2,6 +2,7 @@
 use actix_files as fs;
 use actix_files::NamedFile;
 use actix_web::{error, web, App, HttpRequest, HttpResponse, HttpServer, Result};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use r2d2_sqlite::{self, SqliteConnectionManager};
 use std::env;
 use std::path::PathBuf;
@@ -21,6 +22,12 @@ use reserr::ResErr;
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
+
+    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    builder
+        .set_private_key_file("key.pem", SslFiletype::PEM)
+        .unwrap();
+    builder.set_certificate_chain_file("cert.pem").unwrap();
 
     let manager = SqliteConnectionManager::file("data.db");
     let pool = Pool::new(manager).unwrap();
@@ -97,7 +104,7 @@ async fn main() -> std::io::Result<()> {
             .service(fs::Files::new("/", "./static"))
             .default_service(web::route().to(index))
     })
-    .bind(env::var("ADDRESS").unwrap())?
+    .bind_openssl(env::var("ADDRESS").unwrap(), builder)?
     .run()
     .await
 }

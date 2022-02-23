@@ -33,6 +33,8 @@ COPY --from=builder /home/rust/src/cloud/target/x86_64-unknown-linux-musl/releas
 COPY .env ${APP}
 COPY static ${APP}/static
 COPY storage ${APP}/storage
+COPY cert.pem ${APP}
+COPY key.pem ${APP}
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
